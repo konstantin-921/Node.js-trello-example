@@ -10,7 +10,9 @@ const sequelize = new Sequelize('trello', 'nodejs', '1111', {
 });
 
 const models = {
+  Users: sequelize.import('./users'),
   Tasks: sequelize.import('./tasks'),
+  Boards: sequelize.import('./boards'),
 }
 
 Object.keys(models).forEach(modelName => {
