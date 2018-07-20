@@ -21,8 +21,32 @@ router.post('/boards', function (req, res, next) {
     caption: req.body.caption,
     user_id: req.body.id,
   })
+    .then((boards) => {
+      res.json(boards.id);
+    })
+    .catch((error) => {
+      next(error);
+    })
+});
+
+router.delete('/boards', function (req, res, next) {
+  models.Tasks.destroy({
+    where: {
+      boards_id: req.body.id,
+    }
+  })
     .then(() => {
-      res.json('Success!');
+      models.Boards.destroy({
+        where: {
+          id: req.body.id,
+        }
+      })
+        .then(() => {
+          res.json('Successful delete!');
+        })
+        .catch((error) => {
+          next(error);
+        })
     })
     .catch((error) => {
       next(error);
