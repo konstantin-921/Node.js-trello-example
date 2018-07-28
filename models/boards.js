@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     user_id: {
       type: DataTypes.INTEGER,
     },
+    share: {
+      type: DataTypes.TEXT,
+    },
   });
 
   return Boards;

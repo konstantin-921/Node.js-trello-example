@@ -6,15 +6,45 @@ const Op = Sequelize.Op;
 
 
 router.get('/tasks', function (req, res, next) {
-  models.Tasks.findAll({
+  // Находим доску по id
+  models.Boards.findAll({
     where: {
-      boards_id: req.query.id,
+      id: req.query.id,
     },
   })
-    .then((tasks) => {
-      res.json(tasks);
+    .then((boards) => {
+      const userId = Number(req.query.userId);
+      // Если id usera создавшего доску и id текущего user совпали, то идем дальше
+      if (boards[0].user_id === userId) {
+        models.Tasks.findAll({
+          where: {
+            boards_id: req.query.id,
+          },
+        })
+          .then((tasks) => {
+            res.json(tasks);
+          })
+          .catch((error) => {
+            next(error);
+          })
+      } else if (boards[0].user_id !== userId && boards[0].share === 'true') {
+        models.Tasks.findAll({
+          where: {
+            boards_id: req.query.id,
+          },
+        })
+          .then((tasks) => {
+            res.json(tasks);
+          })
+          .catch((error) => {
+            next(error);
+          })
+      } else {
+        res.status(403).send('This board does not belong to you');
+      }
     })
     .catch((error) => {
+      res.status(500).send('There is no such board!');
       next(error);
     })
 });

@@ -19,6 +19,7 @@ router.get('/boards', function (req, res, next) {
 router.post('/boards', function (req, res, next) {
   models.Boards.create({
     caption: req.body.caption,
+    share: req.body.share,
     user_id: req.body.id,
   })
     .then((boards) => {
@@ -47,6 +48,20 @@ router.delete('/boards', function (req, res, next) {
         .catch((error) => {
           next(error);
         })
+    })
+    .catch((error) => {
+      next(error);
+    })
+});
+
+router.put('/boards', function (req, res, next) {
+  models.Boards.update({ share: 'true' }, {
+    where: {
+      id: req.body.boardId,
+    }
+  })
+    .then(() => {
+      res.json('Success share!');
     })
     .catch((error) => {
       next(error);
