@@ -6,15 +6,14 @@ const Op = Sequelize.Op;
 
 
 router.get('/tasks', function (req, res, next) {
-  // Находим доску по id
   models.Boards.findAll({
     where: {
       id: req.query.id,
     },
+    raw: true,
   })
     .then((boards) => {
       const userId = Number(req.query.userId);
-      // Если id usera создавшего доску и id текущего user совпали, то идем дальше
       if (boards[0].user_id === userId) {
         models.Tasks.findAll({
           where: {
@@ -40,11 +39,12 @@ router.get('/tasks', function (req, res, next) {
             next(error);
           })
       } else {
-        res.status(403).send('This board does not belong to you');
+        res.status(403).json({ message: 'This board does not belong to you' });
       }
     })
     .catch((error) => {
-      res.status(500).send('There is no such board!');
+      error.status = 404;
+      error.message = 'This board does not exist!';
       next(error);
     })
 });
@@ -60,7 +60,7 @@ router.post('/tasks', function (req, res, next) {
         boards_id: elem.boardsId,
       })
         .then(() => {
-          res.json('Success!');
+          res.json({ message: 'Success create board!' });
         })
         .catch((error) => {
           next(error);
@@ -75,7 +75,7 @@ router.post('/tasks', function (req, res, next) {
       boards_id: req.body.boards_id,
     })
       .then(() => {
-        res.json('Success!');
+        res.json({ message: 'Success create!' });
       })
       .catch((error) => {
         next(error);
@@ -91,7 +91,6 @@ router.delete('/tasks', function (req, res, next) {
   })
     .then(() => {
       models.Tasks.update({ position: Sequelize.literal('position - 1') }, {
-        returning: true,
         where: {
           position: { [Op.gte]: req.body.position },
           status: req.body.status,
@@ -100,7 +99,7 @@ router.delete('/tasks', function (req, res, next) {
       })
     })
     .then(() => {
-      res.json('Success delete!');
+      res.json({ message: 'Success delete!' });
     })
     .catch((error) => {
       next(error);
@@ -112,10 +111,10 @@ router.put('/tasks', function (req, res, next) {
   const newPosition = req.body.position;
   const oldPosition = req.body.oldPosition;
 
+  // Vertical move
   if (req.body.oldStatus === req.body.status) {
     if (newPosition < oldPosition) {
       models.Tasks.update({ position: Sequelize.literal('position + 1') }, {
-        returning: true,
         where: {
           position: {
             [Op.lte]: oldPosition,
@@ -127,12 +126,11 @@ router.put('/tasks', function (req, res, next) {
       })
         .then(() => {
           models.Tasks.update({ position: newPosition }, {
-            returning: true,
             where: { id: req.body.id }
           },
           )
             .then(() => {
-              res.json('Success update!');
+              res.json({ message: 'Success update!' });
             })
             .catch((error) => {
               next(error);
@@ -143,7 +141,6 @@ router.put('/tasks', function (req, res, next) {
         })
     } else if (newPosition > oldPosition) {
       models.Tasks.update({ position: Sequelize.literal('position - 1') }, {
-        returning: true,
         where: {
           position: {
             [Op.gte]: oldPosition,
@@ -155,12 +152,11 @@ router.put('/tasks', function (req, res, next) {
       })
         .then(() => {
           models.Tasks.update({ position: newPosition }, {
-            returning: true,
             where: { id: req.body.id }
           },
           )
             .then(() => {
-              res.json('Success update!');
+              res.json({ message: 'Success update!' });
             })
             .catch((error) => {
               next(error);
@@ -171,12 +167,11 @@ router.put('/tasks', function (req, res, next) {
         })
     } else if (newPosition === oldPosition) {
       models.Tasks.update({ position: newPosition }, {
-        returning: true,
         where: { id: req.body.id }
       },
       )
         .then(() => {
-          res.json('Success update!');
+          res.json({ message: 'Success update!' });
         })
         .catch((error) => {
           next(error);
@@ -208,7 +203,7 @@ router.put('/tasks', function (req, res, next) {
           where: { id: req.body.id }
         })
           .then(() => {
-            res.json('Success update!');
+            res.json({ message: 'Success update!' });
           })
           .catch((error) => {
             next(error);

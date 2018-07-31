@@ -21,6 +21,15 @@ app.use(tasks);
 app.use(users);
 app.use(boards);
 
+app.use(function (error, req, res, next) {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message
+    }
+  });
+})
+
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });

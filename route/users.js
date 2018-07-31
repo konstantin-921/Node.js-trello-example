@@ -3,7 +3,7 @@ const router = module.exports = express.Router();
 const bcrypt = require('bcrypt');
 const models = require('../models/sequelize');
 
-router.post('/users', function (req, res, next) {
+router.post('/users/registration', function (req, res, next) {
   hash(req, res, next);
 });
 
@@ -20,18 +20,18 @@ function addUser(req, res, next) {
     where: { name: `${req.body.username}` },
   })
     .then((users) => {
-      if (users[0] === undefined) {
+      if (!users[0]) {
         models.Users.create({
           password: req.body.userpass,
           name: req.body.username,
           email: req.body.useremail,
         })
-          .then(() => { res.json("Successful registration!") })
+          .then(() => { res.json({ message: 'Successful registration!' }) })
           .catch((error) => {
             next(error);
           })
       } else {
-        res.json({ error: 'This user already exists' });
+        res.json({ message: 'This user already exists' });
       }
     })
     .catch((error) => {

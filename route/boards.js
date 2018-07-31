@@ -43,7 +43,7 @@ router.delete('/boards', function (req, res, next) {
         }
       })
         .then(() => {
-          res.json('Successful delete!');
+          res.json({ message: 'Successful delete!' });
         })
         .catch((error) => {
           next(error);
@@ -61,7 +61,7 @@ router.put('/boards', function (req, res, next) {
     }
   })
     .then(() => {
-      res.json('Success share!');
+      res.json({ message: 'Success share!' });
     })
     .catch((error) => {
       next(error);
