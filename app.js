@@ -5,9 +5,8 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const tasks = require('./route/tasks');
 const auth = require('./route/auth');
-const users = require('./route/users');
 const boards = require('./route/boards');
-const verifytoken = require('./api/servces/verifytoken');
+const verifytoken = require('./services/verifytoken');
 
 app.use(cors());
 app.use(verifytoken);
@@ -18,8 +17,8 @@ app.use(bodyParser.json());
 
 app.use(auth);
 app.use(tasks);
-app.use(users);
 app.use(boards);
+
 
 app.use(function (error, req, res, next) {
   res.status(error.status || 500);

@@ -1,11 +1,12 @@
 const Sequelize = require('sequelize');
+const config = require('../config/config');
 
-const sequelize = new Sequelize('trello', 'nodejs', '1111', {
-  dialect: 'postgres',
-  host: 'localhost',
-  port: 5432,
+const sequelize = new Sequelize(config.db.name, config.db.user, config.db.pass, {
+  dialect: config.db.dialect,
+  host: config.db.host,
+  port: config.db.port,
   define: {
-    timestamps: false
+    timestamps: config.db.timestamps
   }
 });
 
