@@ -1,18 +1,15 @@
-My Application
+Node.js-trello-example
 ================
-An application for exchanging messages between users. To store information about users and messages, the PostgreSQL database is used.
+This is a server side application for repo React-trello-example.
 
 Install and start
 ----------
 ```sh
+git clone git@github.com:konstantin-921/Node.js-trello-example.git
 npm install
 npm start
 ```
-You also need to configure the ORM Sequelize in the sequelize.js file and you need to run the PostgreSQL database.
-```sh
-  const sequelize = new Sequelize('database', 'username', 'password', {
-    dialect: 'postgres',
-    host: 'localhost',
-    port: 5432
-  });
-  ```
+
+Command for uploading database:
+
+psql -h hostname -d databasename -U username -f <path-to-file>/db.sql

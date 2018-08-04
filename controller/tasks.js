@@ -11,6 +11,7 @@ function getTasks(req, res, next) {
   })
     .then((boards) => {
       const userId = Number(req.query.userId);
+      // Get tasks for main user
       if (boards.user_id === userId) {
         models.Tasks.findAll({
           where: {
@@ -23,6 +24,7 @@ function getTasks(req, res, next) {
           .catch((error) => {
             next(error);
           })
+        // Get tasks for share user
       } else if (boards.user_id !== userId && boards.share === 'true') {
         models.Tasks.findAll({
           where: {
@@ -47,6 +49,7 @@ function getTasks(req, res, next) {
 }
 
 function createTasks(req, res, next) {
+  // Save tasks from default board
   if (Array.isArray(req.body)) {
     req.body.forEach(elem => {
       models.Tasks.create({
@@ -63,6 +66,7 @@ function createTasks(req, res, next) {
           next(error);
         })
     });
+    // Save task from custom boards
   } else {
     models.Tasks.create({
       content: req.body.content,
